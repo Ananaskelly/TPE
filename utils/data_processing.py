@@ -76,6 +76,27 @@ def generate_tuples(path_to_files, path_to_out_proto_file):
                                                          all_file_names[idx]))
 
 
+def split_set(path_to_proto, out_train_path, out_valid_path, valid_part=0.1):
+
+    with open(path_to_proto, 'r') as proto_file:
+        all_lines = proto_file.readlines()
+        np.random.shuffle(all_lines)
+
+        num_ex = len(all_lines)
+        bound = int(num_ex * (1 - valid_part))
+
+        train_list = all_lines[:bound]
+        valid_list = all_lines[bound:]
+
+        with open(out_train_path, 'w') as train_proto_file:
+            for line in train_list:
+                train_proto_file.write(line)
+
+        with open(out_valid_path, 'w') as valid_proto_file:
+            for line in valid_list:
+                valid_proto_file.write(line)
+
+
 if __name__ == '__main__':
     path_to_train_data = '../data/train_db'
     path_to_test_data = '../data/test_db'
@@ -85,4 +106,4 @@ if __name__ == '__main__':
 
     # txt_to_numpy(path_to_test_data, out_test)
     # txt_to_numpy(path_to_train_data, out_train)
-    generate_tuples(path_to_train_data, '../data/train_tuples_proto.txt')
+    generate_tuples(path_to_train_data, '../data/all_tuples_proto.txt')
